@@ -131,7 +131,7 @@ body {
 /* Hero Section */
 .hero {
     background: linear-gradient(135deg, #faa1a1 0%, #ffb3b3 50%, #ffffff 100%);
-    min-height: 100vh;
+    min-height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -307,9 +307,10 @@ section {
 }
 
 .features {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
     flex-wrap: wrap;
 }
 
