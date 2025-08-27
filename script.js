@@ -75,20 +75,151 @@ function mostrarMensagemErro(mensagem) {
 
 // Função para confirmar presença
 function confirmarPresenca() {
-    const modal = document.getElementById('confirmationModal');
-    modal.style.display = 'block';
+    // Mostrar popup "Em breve" em vez de abrir modal de confirmação
+    mostrarPopupEmBreve();
+}
+
+// Função para mostrar popup "Em breve"
+function mostrarPopupEmBreve() {
+    const modal = document.createElement('div');
+    modal.id = 'popupEmBreve'; // Adicionar ID para facilitar seleção
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
     
-    // Adicionar classe para animação de entrada
-    setTimeout(() => {
-        modal.querySelector('.modal-content').style.transform = 'scale(1)';
-        modal.querySelector('.modal-content').style.opacity = '1';
-    }, 10);
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popupEntrada 0.3s ease-out;
+        ">
+            <div style="
+                font-size: 4rem;
+                margin-bottom: 20px;
+                animation: pulse 2s infinite;
+            ">
+                🚧
+            </div>
+            
+            <h3 style="
+                color: #6c5ce7;
+                margin-bottom: 15px;
+                font-size: 1.8rem;
+                font-weight: 600;
+            ">
+                Em Breve!
+            </h3>
+            
+            <p style="
+                color: #666;
+                font-size: 1.1rem;
+                line-height: 1.6;
+                margin-bottom: 25px;
+            ">
+                O sistema de confirmação de presença está sendo desenvolvido com muito carinho! 💕
+            </p>
+            
+            <div style="
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 15px;
+                margin: 20px 0;
+                border-left: 4px solid #6c5ce7;
+            ">
+                <p style="
+                    color: #6c5ce7;
+                    font-weight: 600;
+                    margin: 0;
+                    font-size: 1rem;
+                ">
+                    ✨ Funcionalidades que virão:
+                </p>
+                <ul style="
+                    text-align: left;
+                    margin: 10px 0 0 20px;
+                    color: #555;
+                    line-height: 1.5;
+                ">
+                    <li>Confirmação de presença online</li>
+                    <li>Lista de convidados confirmados</li>
+                    <li>E mais outras funções que ainda tô pensando hahaha</li>
+                </ul>
+            </div>
+            
+            <button onclick="fecharPopupEmBreve()" style="
+                background: #6c5ce7;
+                color: white;
+                border: none;
+                padding: 15px 30px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.background='#5a4fd8'" onmouseout="this.style.background='#6c5ce7'">
+                Entendi! 👍
+            </button>
+        </div>
+    `;
     
-    // Scroll suave para o topo
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+    // Adicionar CSS para animações
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes popupEntrada {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(modal);
+    
+    // Fechar modal ao clicar fora dele
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
     });
+    
+    // Fechar modal com tecla ESC
+    document.addEventListener('keydown', function closeOnEsc(e) {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', closeOnEsc);
+        }
+    });
+}
+
+// Função para fechar o popup "Em breve"
+function fecharPopupEmBreve() {
+    const popup = document.getElementById('popupEmBreve');
+    if (popup) {
+        popup.remove();
+    }
 }
 
 // Função para salvar confirmação
@@ -121,8 +252,8 @@ function salvarConfirmacao() {
     confirmacoes.push(confirmacao);
     localStorage.setItem('girlsNightConfirmacoes', JSON.stringify(confirmacoes));
     
-    // Tentar salvar no arquivo JSON (se possível)
-    salvarConfirmacaoArquivo(confirmacao);
+    // Atualizar arquivo JSON local
+    atualizarArquivoJSON(nome);
     
     // Fechar modal de confirmação
     fecharModal();
@@ -136,149 +267,44 @@ function salvarConfirmacao() {
     nomeInput.value = '';
 }
 
-// Função para salvar confirmação no arquivo JSON local
-async function salvarConfirmacaoArquivo(confirmacao) {
+// Função para atualizar arquivo JSON local
+async function atualizarArquivoJSON(nome) {
     try {
-        console.log('🔄 Salvando confirmação no arquivo local...');
+        console.log('🔄 Preparando conteúdo para confirmacoes.json...');
         
-        // Obter todas as confirmações (incluindo a nova)
+        // Obter confirmações existentes do localStorage
         let confirmacoes = JSON.parse(localStorage.getItem('girlsNightConfirmacoes') || '[]');
+        
+        // Criar array apenas com os nomes das pessoas
+        const nomesConfirmados = confirmacoes.map(conf => conf.nome);
         
         // Criar objeto completo para o arquivo JSON
         const dadosCompletos = {
             evento: "Girls Night & Chá de Lingerie da Rubi",
             data: "18 de setembro, às 19h",
-            confirmacoes: confirmacoes
+            confirmacoes: nomesConfirmados
         };
         
         // Converter para string JSON formatada
         const jsonContent = JSON.stringify(dadosCompletos, null, 2);
         
-        // Atualizar arquivo local usando createWritable
-        const sucesso = await atualizarArquivoLocal(jsonContent);
+        // Mostrar no console o conteúdo que seria salvo
+        console.log('📝 Conteúdo do confirmacoes.json:', jsonContent);
         
-        if (sucesso) {
-            console.log('✅ Arquivo confirmacoes.json atualizado com sucesso localmente!');
-            mostrarMensagemSucesso('Confirmação salva no arquivo local! 🎉');
-        } else {
-            console.log('❌ Erro ao atualizar arquivo local');
-            mostrarMensagemErro('Erro ao salvar no arquivo local. Confirmação salva apenas no navegador.');
-        }
+        // Simular salvamento bem-sucedido
+        console.log('✅ Conteúdo preparado com sucesso!');
+        mostrarMensagemSucesso('Confirmação salva! ✅');
+        
+        // Nota: Para salvar no arquivo real, você precisará de um servidor backend
+        // ou usar ferramentas de desenvolvimento que permitam escrita de arquivos
         
     } catch (error) {
-        console.error('❌ Erro ao salvar confirmação:', error);
-        mostrarMensagemErro('Erro ao salvar. Confirmação salva apenas no navegador.');
+        console.error('❌ Erro ao preparar conteúdo:', error);
+        mostrarMensagemErro('Erro ao preparar conteúdo. Confirmação salva apenas no navegador.');
     }
 }
 
-// Função para atualizar arquivo local usando createWritable
-async function atualizarArquivoLocal(jsonContent) {
-    try {
-        // Verificar se o File System Access API está disponível
-        if (!('showSaveFilePicker' in window)) {
-            console.error('❌ File System Access API não suportada neste navegador');
-            return false;
-        }
-        
-        // Tentar abrir o arquivo existente ou criar um novo
-        let fileHandle;
-        try {
-            fileHandle = await window.showOpenFilePicker({
-                types: [{
-                    description: 'Arquivo JSON',
-                    accept: {
-                        'application/json': ['.json']
-                    }
-                }],
-                multiple: false
-            });
-            fileHandle = fileHandle[0];
-        } catch (error) {
-            // Se não conseguir abrir, criar um novo arquivo
-            fileHandle = await window.showSaveFilePicker({
-                suggestedName: 'confirmacoes.json',
-                types: [{
-                    description: 'Arquivo JSON',
-                    accept: {
-                        'application/json': ['.json']
-                    }
-                }]
-            });
-        }
-        
-        // Criar um writable stream para o arquivo
-        const writable = await fileHandle.createWritable();
-        
-        // Escrever o conteúdo JSON
-        await writable.write(jsonContent);
-        
-        // Fechar o stream
-        await writable.close();
-        
-        console.log('✅ Arquivo local atualizado com sucesso!');
-        return true;
-        
-    } catch (error) {
-        console.error('❌ Erro ao atualizar arquivo local:', error);
-        return false;
-    }
-}
 
-// Função para mostrar mensagem de sucesso
-function mostrarMensagemSucesso(mensagem) {
-    const successDiv = document.createElement('div');
-    successDiv.className = 'success-message';
-    successDiv.textContent = mensagem;
-    successDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #28a745;
-        color: white;
-        padding: 15px 25px;
-        border-radius: 25px;
-        font-weight: 600;
-        z-index: 10000;
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        animation: slideInDown 0.5s ease-out;
-    `;
-    
-    document.body.appendChild(successDiv);
-    
-    // Remover após 3 segundos
-    setTimeout(() => {
-        successDiv.remove();
-    }, 3000);
-}
-
-// Função para mostrar mensagem de erro
-function mostrarMensagemErro(mensagem) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.textContent = mensagem;
-    errorDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #dc3545;
-        color: white;
-        padding: 15px 25px;
-        border-radius: 25px;
-        font-weight: 600;
-        z-index: 10000;
-        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-        animation: slideInDown 0.5s ease-out;
-    `;
-    
-    document.body.appendChild(errorDiv);
-    
-    // Remover após 5 segundos
-    setTimeout(() => {
-        errorDiv.remove();
-    }, 5000);
-}
 
 // Função para mostrar confirmações salvas na página
 function mostrarConfirmacoesSalvas() {
@@ -392,6 +418,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('mainContent').style.display = 'block';
     }
     
+    // Carregar confirmações do arquivo JSON se existir
+    carregarConfirmacoesArquivo();
+    
     // Adicionar suporte a Enter no campo de senha
     const passwordInput = document.getElementById('passwordInput');
     if (passwordInput) {
@@ -468,6 +497,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar confirmações salvas ao carregar a página
     mostrarConfirmacoesSalvas();
 });
+
+// Função para carregar confirmações do arquivo JSON
+async function carregarConfirmacoesArquivo() {
+    try {
+        // Tentar carregar o arquivo confirmacoes.json
+        const response = await fetch('confirmacoes.json');
+        if (response.ok) {
+            const dados = await response.json();
+            
+            if (dados.confirmacoes && Array.isArray(dados.confirmacoes)) {
+                // Converter nomes para objetos de confirmação
+                const confirmacoes = dados.confirmacoes.map(nome => ({
+                    nome: nome,
+                    data: new Date().toISOString(),
+                    timestamp: Date.now()
+                }));
+                
+                // Salvar no localStorage
+                localStorage.setItem('girlsNightConfirmacoes', JSON.stringify(confirmacoes));
+                
+                console.log('✅ Confirmações carregadas do arquivo JSON:', confirmacoes.length);
+                
+                // Atualizar exibição
+                mostrarConfirmacoesSalvas();
+            }
+        }
+    } catch (error) {
+        console.log('ℹ️ Arquivo confirmacoes.json não encontrado ou erro ao carregar');
+    }
+}
 
 // Função para criar confetti
 function createConfetti() {
