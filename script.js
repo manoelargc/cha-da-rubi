@@ -136,17 +136,17 @@ function salvarConfirmacao() {
     nomeInput.value = '';
 }
 
-// Função para salvar confirmação no arquivo do repositório
+// Função para salvar confirmação no arquivo JSON local
 async function salvarConfirmacaoArquivo(confirmacao) {
     try {
-        console.log('🔄 Salvando confirmação no repositório...');
+        console.log('🔄 Salvando confirmação no arquivo local...');
         
         // Obter todas as confirmações (incluindo a nova)
         let confirmacoes = JSON.parse(localStorage.getItem('girlsNightConfirmacoes') || '[]');
         
         // Criar objeto completo para o arquivo JSON
         const dadosCompletos = {
-            evento: "Chá de Lingerie da Rubi",
+            evento: "Girls Night & Chá de Lingerie da Rubi",
             data: "18 de setembro, às 19h",
             confirmacoes: confirmacoes
         };
@@ -154,79 +154,72 @@ async function salvarConfirmacaoArquivo(confirmacao) {
         // Converter para string JSON formatada
         const jsonContent = JSON.stringify(dadosCompletos, null, 2);
         
-        // Atualizar arquivo no GitHub usando a API
-        const sucesso = await atualizarArquivoGitHub(jsonContent);
+        // Atualizar arquivo local usando createWritable
+        const sucesso = await atualizarArquivoLocal(jsonContent);
         
         if (sucesso) {
-            console.log('✅ Arquivo confirmacoes.json atualizado com sucesso no repositório!');
-            mostrarMensagemSucesso('Confirmação salva no repositório! 🎉');
+            console.log('✅ Arquivo confirmacoes.json atualizado com sucesso localmente!');
+            mostrarMensagemSucesso('Confirmação salva no arquivo local! 🎉');
         } else {
-            console.log('❌ Erro ao atualizar arquivo no repositório');
-            mostrarMensagemErro('Erro ao salvar no repositório. Confirmação salva apenas localmente.');
+            console.log('❌ Erro ao atualizar arquivo local');
+            mostrarMensagemErro('Erro ao salvar no arquivo local. Confirmação salva apenas no navegador.');
         }
         
     } catch (error) {
         console.error('❌ Erro ao salvar confirmação:', error);
-        mostrarMensagemErro('Erro ao salvar. Confirmação salva apenas localmente.');
+        mostrarMensagemErro('Erro ao salvar. Confirmação salva apenas no navegador.');
     }
 }
 
-// Função para atualizar arquivo no GitHub usando a API
-async function atualizarArquivoGitHub(jsonContent) {
+// Função para atualizar arquivo local usando createWritable
+async function atualizarArquivoLocal(jsonContent) {
     try {
-        // Verificar se as configurações estão disponíveis
-        if (!window.GITHUB_CONFIG || !window.GITHUB_CONFIG.token) {
-            console.error('❌ Configurações do GitHub não encontradas');
+        // Verificar se o File System Access API está disponível
+        if (!('showSaveFilePicker' in window)) {
+            console.error('❌ File System Access API não suportada neste navegador');
             return false;
         }
         
-        const config = window.GITHUB_CONFIG;
-        
-        // Primeiro, obter o SHA atual do arquivo (necessário para atualização)
-        const shaResponse = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.filePath}`, {
-            headers: {
-                'Authorization': `token ${config.token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'GirlsNightApp'
-            }
-        });
-        
-        if (!shaResponse.ok) {
-            console.error('❌ Erro ao obter SHA do arquivo:', shaResponse.status);
-            return false;
+        // Tentar abrir o arquivo existente ou criar um novo
+        let fileHandle;
+        try {
+            fileHandle = await window.showOpenFilePicker({
+                types: [{
+                    description: 'Arquivo JSON',
+                    accept: {
+                        'application/json': ['.json']
+                    }
+                }],
+                multiple: false
+            });
+            fileHandle = fileHandle[0];
+        } catch (error) {
+            // Se não conseguir abrir, criar um novo arquivo
+            fileHandle = await window.showSaveFilePicker({
+                suggestedName: 'confirmacoes.json',
+                types: [{
+                    description: 'Arquivo JSON',
+                    accept: {
+                        'application/json': ['.json']
+                    }
+                }]
+            });
         }
         
-        const fileInfo = await shaResponse.json();
-        const currentSha = fileInfo.sha;
+        // Criar um writable stream para o arquivo
+        const writable = await fileHandle.createWritable();
         
-        // Atualizar o arquivo
-        const updateResponse = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.filePath}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${config.token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json',
-                'User-Agent': 'GirlsNightApp'
-            },
-            body: JSON.stringify({
-                message: config.commitMessage,
-                content: btoa(unescape(encodeURIComponent(jsonContent))), // Codificar em base64
-                sha: currentSha,
-                branch: 'main' // ou 'master', dependendo da sua branch padrão
-            })
-        });
+        // Escrever o conteúdo JSON
+        await writable.write(jsonContent);
         
-        if (updateResponse.ok) {
-            console.log('✅ Arquivo atualizado com sucesso!');
-            return true;
-        } else {
-            const errorData = await updateResponse.json();
-            console.error('❌ Erro na API do GitHub:', errorData);
-            return false;
-        }
+        // Fechar o stream
+        await writable.close();
+        
+        console.log('✅ Arquivo local atualizado com sucesso!');
+        return true;
         
     } catch (error) {
-        console.error('❌ Erro ao atualizar arquivo:', error);
+        console.error('❌ Erro ao atualizar arquivo local:', error);
         return false;
     }
 }

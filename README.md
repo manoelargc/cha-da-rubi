@@ -57,8 +57,7 @@ php -S localhost:8000
 
 ### Opção 3: Deploy Online
 - **Netlify**: Arraste a pasta para netlify.com
-- **Vercel**: Conecte seu repositório GitHub
-- **GitHub Pages**: Ative nas configurações do repositório
+- **Vercel**: Faça upload da pasta do projeto
 
 ## 🛠️ Personalização
 
@@ -93,9 +92,8 @@ girlsnight/
 ├── styles.css              # Estilos CSS e responsividade
 ├── script.js               # Funcionalidades JavaScript
 ├── config.js               # Configurações da página
-├── github-config.js        # Configurações do GitHub (credenciais)
 ├── confirmacoes.json       # Arquivo para armazenar confirmações
-├── INSTRUCOES_REPOSITORIO.md # Instruções avançadas
+├── INSTRUCOES_SISTEMA_LOCAL.md # Instruções do sistema local
 └── README.md               # Este arquivo de instruções
 ```
 
@@ -103,22 +101,22 @@ girlsnight/
 
 - **Formulário**: Campo para inserir nome completo
 - **Validação**: Nome é obrigatório
-- **Armazenamento**: Salva no localStorage do navegador E no arquivo confirmacoes.json do repositório
+- **Armazenamento**: Salva no localStorage do navegador E no arquivo confirmacoes.json local
 - **Visualização**: Mostra contador de confirmações na página
 - **Persistência**: Dados ficam salvos mesmo após fechar o navegador
 
-### 🚀 Salvamento no Repositório GitHub
-Para salvar as confirmações diretamente no arquivo `confirmacoes.json` do repositório:
+### 🚀 Salvamento no Arquivo Local
+Para salvar as confirmações diretamente no arquivo `confirmacoes.json` local:
 
-1. **Configure o GitHub**: Siga as instruções em `CONFIGURAR_GITHUB.md`
-2. **Crie um token**: Personal Access Token com permissões `repo`
-3. **Edite github-config.js**: Adicione suas credenciais
+1. **Navegador Compatível**: Use um navegador que suporte File System Access API (Chrome, Edge)
+2. **Permissão**: O navegador solicitará permissão para acessar arquivos
+3. **Arquivo**: As confirmações são salvas no arquivo JSON local do projeto
 4. **Teste**: Faça uma confirmação e verifique se o arquivo foi atualizado
 
 ### ⚠️ Importante
-- **Configuração obrigatória**: Para salvar no repositório, configure o `github-config.js`
-- **Sem configuração**: As confirmações ficam apenas no navegador
-- **Segurança**: Nunca compartilhe seu token do GitHub
+- **Navegador**: Funciona melhor no Chrome e Edge (File System Access API)
+- **Permissões**: O usuário deve autorizar o acesso aos arquivos
+- **Arquivo Local**: As confirmações são salvas no arquivo JSON do projeto
 
 ## 🎯 Funcionalidades JavaScript
 
