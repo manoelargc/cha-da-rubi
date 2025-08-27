@@ -93,7 +93,9 @@ girlsnight/
 ├── styles.css              # Estilos CSS e responsividade
 ├── script.js               # Funcionalidades JavaScript
 ├── config.js               # Configurações da página
+├── github-config.js        # Configurações do GitHub (credenciais)
 ├── confirmacoes.json       # Arquivo para armazenar confirmações
+├── INSTRUCOES_REPOSITORIO.md # Instruções avançadas
 └── README.md               # Este arquivo de instruções
 ```
 
@@ -101,14 +103,22 @@ girlsnight/
 
 - **Formulário**: Campo para inserir nome completo
 - **Validação**: Nome é obrigatório
-- **Armazenamento**: Salva no localStorage do navegador
+- **Armazenamento**: Salva no localStorage do navegador E no arquivo confirmacoes.json do repositório
 - **Visualização**: Mostra contador de confirmações na página
 - **Persistência**: Dados ficam salvos mesmo após fechar o navegador
 
-### ⚠️ Importante sobre o JSON
-- **Atualmente**: As confirmações são salvas apenas no navegador
-- **Para salvar no repositório**: Consulte o arquivo `INSTRUCOES_REPOSITORIO.md`
-- **Alternativa temporária**: Use o console do navegador para acessar as confirmações
+### 🚀 Salvamento no Repositório GitHub
+Para salvar as confirmações diretamente no arquivo `confirmacoes.json` do repositório:
+
+1. **Configure o GitHub**: Siga as instruções em `CONFIGURAR_GITHUB.md`
+2. **Crie um token**: Personal Access Token com permissões `repo`
+3. **Edite github-config.js**: Adicione suas credenciais
+4. **Teste**: Faça uma confirmação e verifique se o arquivo foi atualizado
+
+### ⚠️ Importante
+- **Configuração obrigatória**: Para salvar no repositório, configure o `github-config.js`
+- **Sem configuração**: As confirmações ficam apenas no navegador
+- **Segurança**: Nunca compartilhe seu token do GitHub
 
 ## 🎯 Funcionalidades JavaScript
 

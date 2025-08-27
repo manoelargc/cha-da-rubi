@@ -137,21 +137,154 @@ function salvarConfirmacao() {
 }
 
 // Função para salvar confirmação no arquivo do repositório
-function salvarConfirmacaoArquivo(confirmacao) {
-    // Log da confirmação no console
-    console.log('Confirmação salva:', confirmacao);
+async function salvarConfirmacaoArquivo(confirmacao) {
+    try {
+        console.log('🔄 Salvando confirmação no repositório...');
+        
+        // Obter todas as confirmações (incluindo a nova)
+        let confirmacoes = JSON.parse(localStorage.getItem('girlsNightConfirmacoes') || '[]');
+        
+        // Criar objeto completo para o arquivo JSON
+        const dadosCompletos = {
+            evento: "Chá de Lingerie da Rubi",
+            data: "18 de setembro, às 19h",
+            confirmacoes: confirmacoes
+        };
+        
+        // Converter para string JSON formatada
+        const jsonContent = JSON.stringify(dadosCompletos, null, 2);
+        
+        // Atualizar arquivo no GitHub usando a API
+        const sucesso = await atualizarArquivoGitHub(jsonContent);
+        
+        if (sucesso) {
+            console.log('✅ Arquivo confirmacoes.json atualizado com sucesso no repositório!');
+            mostrarMensagemSucesso('Confirmação salva no repositório! 🎉');
+        } else {
+            console.log('❌ Erro ao atualizar arquivo no repositório');
+            mostrarMensagemErro('Erro ao salvar no repositório. Confirmação salva apenas localmente.');
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro ao salvar confirmação:', error);
+        mostrarMensagemErro('Erro ao salvar. Confirmação salva apenas localmente.');
+    }
+}
+
+// Função para atualizar arquivo no GitHub usando a API
+async function atualizarArquivoGitHub(jsonContent) {
+    try {
+        // Verificar se as configurações estão disponíveis
+        if (!window.GITHUB_CONFIG || !window.GITHUB_CONFIG.token) {
+            console.error('❌ Configurações do GitHub não encontradas');
+            return false;
+        }
+        
+        const config = window.GITHUB_CONFIG;
+        
+        // Primeiro, obter o SHA atual do arquivo (necessário para atualização)
+        const shaResponse = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.filePath}`, {
+            headers: {
+                'Authorization': `token ${config.token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'GirlsNightApp'
+            }
+        });
+        
+        if (!shaResponse.ok) {
+            console.error('❌ Erro ao obter SHA do arquivo:', shaResponse.status);
+            return false;
+        }
+        
+        const fileInfo = await shaResponse.json();
+        const currentSha = fileInfo.sha;
+        
+        // Atualizar o arquivo
+        const updateResponse = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.filePath}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${config.token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+                'User-Agent': 'GirlsNightApp'
+            },
+            body: JSON.stringify({
+                message: config.commitMessage,
+                content: btoa(unescape(encodeURIComponent(jsonContent))), // Codificar em base64
+                sha: currentSha,
+                branch: 'main' // ou 'master', dependendo da sua branch padrão
+            })
+        });
+        
+        if (updateResponse.ok) {
+            console.log('✅ Arquivo atualizado com sucesso!');
+            return true;
+        } else {
+            const errorData = await updateResponse.json();
+            console.error('❌ Erro na API do GitHub:', errorData);
+            return false;
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro ao atualizar arquivo:', error);
+        return false;
+    }
+}
+
+// Função para mostrar mensagem de sucesso
+function mostrarMensagemSucesso(mensagem) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-message';
+    successDiv.textContent = mensagem;
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #28a745;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        animation: slideInDown 0.5s ease-out;
+    `;
     
-    // Atualizar o arquivo confirmacoes.json no repositório
-    // Nota: Para isso funcionar, você precisará de um backend ou usar GitHub API
-    // Por enquanto, vamos apenas mostrar as confirmações na página
+    document.body.appendChild(successDiv);
     
-    // Mostrar confirmações salvas na página
-    mostrarConfirmacoesSalvas();
+    // Remover após 3 segundos
+    setTimeout(() => {
+        successDiv.remove();
+    }, 3000);
+}
+
+// Função para mostrar mensagem de erro
+function mostrarMensagemErro(mensagem) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = mensagem;
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #dc3545;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        animation: slideInDown 0.5s ease-out;
+    `;
     
-    // Log das confirmações totais
-    let confirmacoes = JSON.parse(localStorage.getItem('girlsNightConfirmacoes') || '[]');
-    console.log('Total de confirmações:', confirmacoes.length);
-    console.log('Todas as confirmações:', confirmacoes);
+    document.body.appendChild(errorDiv);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
 }
 
 // Função para mostrar confirmações salvas na página
