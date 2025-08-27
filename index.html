@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bride to Be, Rubi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sofia:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-ribbon"></div>
+            <h1 class="login-title">🎀 Chá de Lingerie da Rubi 🎀</h1>
+            <p class="login-subtitle">Digite a senha para acessar a página</p>
+            <div class="login-form">
+                <input type="password" id="passwordInput" placeholder="Digite a senha" class="password-input">
+                <button onclick="verificarSenha()" class="login-button">
+                    <i class="fas fa-unlock"></i>
+                    Desbloquear Página
+                </button>
+            </div>
+            <div class="login-hint">
+                <p>💡 Dica: É o nome do evento em uma palavra</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal (inicialmente oculto) -->
+    <div id="mainContent" class="main-content" style="display: none;">
+        <!-- Hero Section -->
+        <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Chá de Lingerie da Rubi</h1>
+            <p class="hero-subtitle">18.09.2025 | 19h</p>
+            <button class="cta-button" onclick="confirmarPresenca()">
+                <i class="fas fa-heart"></i>
+                Confirmar Presença
+            </button>
+        </div>
+        <div class="floating-hearts">
+            <div class="heart heart-1">🤍</div>
+            <div class="heart heart-2">🤍</div>
+            <div class="heart heart-3">🤍</div>
+            <div class="heart heart-4">🤍</div>
+
+        </div>
+    </section>
+
+    <!-- Sobre o Evento -->
+    <section class="about">
+        <div class="container">
+            <div class="ribbon-left"></div>
+            <h2 class="section-title">Sobre o Evento</h2>
+            <p class="about-text">
+                Um momento especial para celebrar com a Rubi, com brincadeiras, presentes e muitas risadas.
+            </p>
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-gift"></i>
+                    <span>Presentes</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-cocktail"></i>
+                    <span>Drinks s/ álcool</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-star"></i>
+                    <span>Dinâmicas</span>
+                </div>
+            </div>
+            <div class="ribbon-right"></div>
+        </div>
+    </section>
+
+    <!-- Detalhes Importantes -->
+    <section class="details">
+        <div class="container">
+            <h2 class="section-title">Detalhes Importantes</h2>
+            <div class="details-grid">
+                <div class="detail-card">
+                    <div class="card-ribbon"></div>
+                    <i class="fas fa-calendar"></i>
+                    <h3>Data</h3>
+                    <p>18 de setembro, às 19h</p>
+                </div>
+                <div class="detail-card">
+                    <div class="card-ribbon"></div>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Local</h3>
+                    <p>Rua Presbiteriana, nº 185<br>Vila Maria - BM/RJ</p>
+                </div>
+                <div class="detail-card">
+                    <div class="card-ribbon"></div>
+                    <i class="fas fa-tshirt"></i>
+                    <h3>Dress Code</h3>
+                    <p>Pink (rosa bebê, tons de rosa)<br><em>Evitar branco</em></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Atividades da Noite -->
+    <section class="activities">
+        <div class="container">
+            <div class="ribbon-left"></div>
+            <h2 class="section-title">Atividades da Noite</h2>
+            <div class="activities-list">
+                <div class="activity">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Quiz divertido</span>
+                </div>
+                <div class="activity">
+                    <i class="fas fa-search"></i>
+                    <span>Caça-palavras</span>
+                </div>
+                <div class="activity">
+                    <i class="fas fa-scroll"></i>
+                    <span>Raspadinha</span>
+                </div>
+                <div class="activity">
+                    <i class="fas fa-gift"></i>
+                    <span>Abertura dos presentes</span>
+                </div>
+                <div class="activity">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span>Desenhe o vestido</span>
+                </div>
+                <div class="activity">
+                    <i class="fas fa-dice"></i>
+                    <span>Dinâmicas especiais</span>
+                </div>
+            </div>
+            <div class="ribbon-right"></div>
+        </div>
+    </section>
+
+    <!-- Sugestões de Presentes -->
+    <section class="gifts">
+        <div class="container">
+            <h2 class="section-title">Sugestões de Presentes para Rubi</h2>
+            <div class="gifts-grid">
+                <div class="gift-item">
+                    <i class="fas fa-gift"></i> 
+                    <span>Lingerie</span>
+                </div>
+                <div class="gift-item">
+                    <i class="fas fa-bed"></i>
+                    <span>Pijama</span>
+                </div>
+                <div class="gift-item">
+                    <i class="fas fa-female"></i>
+                    <span>Baby doll</span>
+                </div>
+                <div class="gift-item">
+                    <i class="fas fa-moon"></i>
+                    <span>Camisola</span>
+                </div>
+                <div class="gift-item">
+                    <i class="fas fa-vest"></i>
+                    <span>Robe</span>
+                </div>
+                <div class="gift-item">
+                    <i class="fas fa-kiss-wink-heart"></i>
+                    <span>Creme beijável</span>
+                </div>
+                <div class="gift-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Itens de sexshop</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Final -->
+    <section class="final-cta">
+        <div class="container">
+            <h2 class="section-title">Não perca essa noite especial!</h2>
+            <button class="cta-button large" onclick="confirmarPresenca()">
+                <i class="fas fa-heart"></i>
+                Confirmar Presença
+            </button>
+            <p class="reminder">Não esqueça do presentinho da Rubi</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Chá de Lingerie da Rubi - Girls Just Want to Have Fun! | Desenvolvido com ❤ por Manoela Resende</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-ribbon"></div>
+            <h3>🎉 Confirmar Presença!</h3>
+            <p>Vamos confirmar sua presença no Chá da Rubi!</p>
+            
+            <div class="form-group">
+                <label for="nomeInput">Seu nome:</label>
+                <input type="text" id="nomeInput" placeholder="Digite seu nome completo" class="nome-input">
+            </div>
+            
+            <div class="form-info">
+                <p><strong>Data:</strong> 18 de setembro, às 19h</p>
+                <p><strong>Local:</strong> Rua Presbiteriana, nº 185, Vila Maria - BM/RJ</p>
+                <p><strong>Dress Code:</strong> Pink (rosa bebê, tons de rosa)</p>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-button confirm" onclick="salvarConfirmacao()">
+                    <i class="fas fa-check"></i>
+                    Confirmar Presença
+                </button>
+                <button class="modal-button cancel" onclick="fecharModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div id="successModal" class="modal">
+        <div class="modal-content success">
+            <div class="modal-ribbon"></div>
+            <h3>🎉 Presença Confirmada!</h3>
+            <p>Rubi vai ficar muito feliz! Sua presença foi confirmada com sucesso!</p>
+            <p class="reminder">Não esqueça do presentinho! 🎁</p>
+            <button class="modal-button" onclick="fecharModalSucesso()">Fechar</button>
+        </div>
+    </div>
+
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
