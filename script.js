@@ -1,6 +1,50 @@
 // Configuração da senha
 const SENHA_CORRETA = 'noitedasmeninas';
 
+// Função para entrar na página (sem senha)
+function entrarNaPagina() {
+    console.log('🎯 Função entrarNaPagina() chamada!');
+    
+    // Verificar se os elementos existem
+    const loginScreen = document.getElementById('loginScreen');
+    const mainContent = document.getElementById('mainContent');
+    
+    console.log('🔍 Elementos encontrados:', {
+        loginScreen: loginScreen,
+        mainContent: mainContent
+    });
+    
+    if (!loginScreen || !mainContent) {
+        console.error('❌ Elementos não encontrados!');
+        return;
+    }
+    
+    // Mostrar página principal
+    loginScreen.style.display = 'none';
+    mainContent.style.display = 'block';
+    
+    console.log('✅ Tela de login ocultada, conteúdo principal mostrado');
+    
+    // Salvar no localStorage para não mostrar tela de login novamente
+    localStorage.setItem('girlsNightUnlocked', 'true');
+    
+    // Adicionar efeito de confetti para celebrar
+    try {
+        createConfetti();
+        console.log('🎉 Confetti criado com sucesso!');
+    } catch (error) {
+        console.log('⚠️ Erro ao criar confetti:', error);
+    }
+    
+    // Scroll suave para o topo
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+    
+    console.log('🚀 Função entrarNaPagina() concluída com sucesso!');
+}
+
 // Função para verificar senha
 function verificarSenha() {
     const passwordInput = document.getElementById('passwordInput');

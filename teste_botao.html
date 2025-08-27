@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Botão</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .test-container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        button {
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #ff5a8a;
+            transform: scale(1.05);
+        }
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste do Botão</h1>
+        <p>Clique nos botões para testar as funções:</p>
+        
+        <button onclick="testeSimples()">Teste Simples</button>
+        <button onclick="testeEntrarNaPagina()">Teste entrarNaPagina()</button>
+        <button onclick="verificarElementos()">Verificar Elementos</button>
+        
+        <div id="resultado">
+            <p>Resultado aparecerá aqui...</p>
+        </div>
+    </div>
+
+    <script>
+        function testeSimples() {
+            document.getElementById('resultado').innerHTML = '<p>✅ Função simples funcionando!</p>';
+        }
+        
+        function testeEntrarNaPagina() {
+            try {
+                // Simular a função
+                const resultado = '🎯 Função entrarNaPagina() chamada com sucesso!';
+                document.getElementById('resultado').innerHTML = `<p>${resultado}</p>`;
+                console.log(resultado);
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = `<p>❌ Erro: ${error.message}</p>`;
+                console.error('Erro:', error);
+            }
+        }
+        
+        function verificarElementos() {
+            const loginScreen = document.getElementById('loginScreen');
+            const mainContent = document.getElementById('mainContent');
+            
+            const resultado = `
+                <p><strong>Elementos encontrados:</strong></p>
+                <p>loginScreen: ${loginScreen ? '✅ Encontrado' : '❌ Não encontrado'}</p>
+                <p>mainContent: ${mainContent ? '✅ Encontrado' : '❌ Não encontrado'}</p>
+            `;
+            
+            document.getElementById('resultado').innerHTML = resultado;
+        }
+        
+        // Log quando a página carrega
+        console.log('🚀 Página de teste carregada!');
+    </script>
+</body>
+</html>
